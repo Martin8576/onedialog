@@ -1,5 +1,10 @@
-import PageLayout from '../designsystem/sharedComponents/PageLayout'
+import { Outlet } from 'react-router-dom'
+import { Flex } from 'antd'
 
 export default function Settings() {
-  return <PageLayout title="Einstellungen" />
+  return (
+    <Flex vertical style={{ height: '100%', minHeight: 0, overflow: 'hidden' }}>
+      <Outlet />
+    </Flex>
+  )
 }

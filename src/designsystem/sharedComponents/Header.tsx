@@ -1,9 +1,12 @@
 import React from 'react'
-import { Button, Input, Flex, Tabs } from 'antd'
+import { Button, Input, Flex, Tabs, Tooltip, Typography, theme } from 'antd'
 import type { TabsProps } from 'antd'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faPlus, faMagnifyingGlass } from '@fortawesome/pro-light-svg-icons'
+import { faChevronLeft, faPlus, faMagnifyingGlass } from '@fortawesome/pro-light-svg-icons'
 import { useNavigate } from 'react-router-dom'
+import GreyButton from '../components/GreyButton'
+
+const { Text } = Typography
 
 export interface HeaderProps {
   // Left
@@ -39,6 +42,7 @@ export default function Header({
   addButtonText,
   onAdd,
 }: HeaderProps) {
+  const { token } = theme.useToken()
   const navigate = useNavigate()
 
   const handleBack = () => {
@@ -51,27 +55,31 @@ export default function Header({
       align="center"
       justify="space-between"
       style={{
-        height: 56,
-        padding: '0 24px',
-        background: '#fff',
-        borderBottom: '1px solid #f0f0f0',
+        minHeight: '60px',
+        padding: `0 ${token.paddingSM}px 0 ${token.paddingLG}px`,
+        background: token.colorBgContainer,
+        borderBottom: `${token.lineWidth}px solid ${token.colorBorderSecondary}`,
         flexShrink: 0,
       }}
     >
       {/* Left */}
-      <Flex align="center" gap={12} style={{height: '100%'}}>
+      <Flex align="center" gap={token.marginSM} style={{ height: '100%' }}>
         {backButton && (
-          <Button
-            icon={<FontAwesomeIcon icon={faArrowLeft} />}
-            onClick={handleBack}
-            style={{ flexShrink: 0 }}
-          />
+          <Tooltip title="Zurück">
+            <Button
+              variant="text"
+              color="default"
+              icon={<FontAwesomeIcon icon={faChevronLeft} />}
+              onClick={handleBack}
+              style={{ flexShrink: 0 }}
+            />
+          </Tooltip>
         )}
 
         {title && (
-          <span style={{ fontWeight: 700, fontSize: 16, whiteSpace: 'nowrap' }}>
+          <Text strong style={{ fontSize: token.fontSizeHeading5, whiteSpace: 'nowrap' }}>
             {title}
-          </span>
+          </Text>
         )}
 
         {tabs}
@@ -88,10 +96,10 @@ export default function Header({
       </Flex>
 
       {/* Right */}
-      <Flex align="center" gap={8}>
+      <Flex align="center" gap={token.marginXS}>
         {search && (
           <Input
-            prefix={<FontAwesomeIcon icon={faMagnifyingGlass} style={{ color: '#bfbfbf' }} />}
+            prefix={<FontAwesomeIcon icon={faMagnifyingGlass} style={{ color: token.colorTextDisabled }} />}
             placeholder="Suche"
             style={{ width: searchWidth }}
           />
@@ -100,13 +108,13 @@ export default function Header({
         {secondaryButtons}
 
         {addButton && (
-          <Button
-            type="primary"
+          <GreyButton
+            iconPlacement="end"
             icon={<FontAwesomeIcon icon={faPlus} />}
             onClick={onAdd}
           >
             {addButtonText}
-          </Button>
+          </GreyButton>
         )}
       </Flex>
     </Flex>

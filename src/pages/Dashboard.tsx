@@ -1,5 +1,20 @@
 import { useState } from 'react'
-import { Row, Col, Card, Avatar, Typography, Flex, Checkbox } from 'antd'
+import {
+  Row,
+  Col,
+  Card,
+  Avatar,
+  Typography,
+  Flex,
+  Checkbox,
+  List,
+  Statistic,
+  Tag,
+  Badge,
+  Button,
+  Tooltip,
+  theme,
+} from 'antd'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCircleInfo,
@@ -11,14 +26,14 @@ import {
   faChevronDown,
   faChevronUp,
   faPenToSquare,
-  faEnvelope,
   faMessage,
   faUser,
 } from '@fortawesome/pro-light-svg-icons'
-import { faWhatsapp, faFacebook, faGoogle } from '@fortawesome/free-brands-svg-icons'
 import PageLayout from '../designsystem/sharedComponents/PageLayout'
+import { ChannelIcon } from '../designsystem/components'
 
-const { Text } = Typography
+const { Text, Link } = Typography
+
 
 // ─── types ────────────────────────────────────────────────────────────────────
 
@@ -92,70 +107,102 @@ const campaigns: Campaign[] = [
 // ─── helper components ────────────────────────────────────────────────────────
 
 function SeeAllLink({ label = 'Alle ansehen' }: { label?: string }) {
+  const { token } = theme.useToken()
+
   return (
-    <a style={{ color: '#8c8c8c', fontSize: 13, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
-      {label} <FontAwesomeIcon icon={faChevronRight} style={{ fontSize: 10 }} />
-    </a>
+    <Link
+      style={{
+        fontSize: token.fontSizeSM,
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: token.marginXXS,
+      }}
+    >
+      {label} <FontAwesomeIcon icon={faChevronRight} style={{ fontSize: token.fontSizeSM }} />
+    </Link>
   )
 }
 
 function Channels({ types }: { types: Channel[] }) {
+  const { token } = theme.useToken()
+
   return (
-    <Flex gap={3} align="center">
-      {types.includes('wa') && <FontAwesomeIcon icon={faWhatsapp} style={{ color: '#25D366', fontSize: 16 }} />}
-      {types.includes('email') && <FontAwesomeIcon icon={faEnvelope} style={{ color: '#1677ff', fontSize: 16 }} />}
-      {types.includes('fb') && <FontAwesomeIcon icon={faFacebook} style={{ color: '#1877F2', fontSize: 16 }} />}
-      {types.includes('google') && <FontAwesomeIcon icon={faGoogle} style={{ color: '#EA4335', fontSize: 16 }} />}
+    <Flex gap={token.marginXXS} align="center">
+      {types.includes('wa') && <ChannelIcon channel="whatsapp" size={token.fontSizeLG} />}
+      {types.includes('email') && <ChannelIcon channel="email" size={token.fontSizeLG} />}
+      {types.includes('fb') && <ChannelIcon channel="facebook" size={token.fontSizeLG} />}
+      {types.includes('google') && <ChannelIcon channel="google" size={token.fontSizeLG} />}
     </Flex>
   )
 }
 
-function OnlineDot() {
+function MemberAvatar({ src, online }: { src: string; online?: boolean }) {
+  const { token } = theme.useToken()
+  const size = token.controlHeightSM + token.paddingSM
+
+  const avatar = <Avatar src={src} size={size} />
+
+  if (!online) return avatar
+
   return (
-    <div style={{
-      width: 9, height: 9, borderRadius: '50%', background: '#52c41a',
-      position: 'absolute', bottom: 0, right: 0, border: '1.5px solid #fff',
-    }} />
+    <Badge dot status="success" offset={[-token.marginXXS, token.marginXXS]}>
+      {avatar}
+    </Badge>
+  )
+}
+
+function TodayCelebration() {
+  const { token } = theme.useToken()
+
+  return (
+    <Flex align="center" gap={token.marginXXS}>
+      <Text style={{ fontSize: token.fontSizeSM }}>Heute</Text>
+      <Text style={{ fontSize: token.fontSize }}>🎉</Text>
+    </Flex>
   )
 }
 
 // ─── left column sections ─────────────────────────────────────────────────────
 
 function StatsRow() {
+  const { token } = theme.useToken()
+
   const stats = [
     {
-      icon: <FontAwesomeIcon icon={faMessage} style={{ fontSize: 16 }} />,
+      icon: <FontAwesomeIcon icon={faMessage} style={{ fontSize: token.fontSizeLG }} />,
       title: 'Neukunden',
       values: [{ n: 8, label: 'Vorgänge' }],
     },
     {
-      icon: <FontAwesomeIcon icon={faCircleCheck} style={{ fontSize: 16 }} />,
+      icon: <FontAwesomeIcon icon={faCircleCheck} style={{ fontSize: token.fontSizeLG }} />,
       title: 'Vorgänge',
       values: [{ n: 12, label: 'Meine' }, { n: 45, label: 'Team' }],
     },
     {
-      icon: <FontAwesomeIcon icon={faUser} style={{ fontSize: 16 }} />,
+      icon: <FontAwesomeIcon icon={faUser} style={{ fontSize: token.fontSizeLG }} />,
       title: 'Kunden',
       values: [{ n: 64, label: 'Meine' }, { n: 451, label: 'Gesamt' }],
     },
   ]
 
   return (
-    <Row gutter={12}>
+    <Row gutter={token.marginSM}>
       {stats.map(({ icon, title, values }) => (
         <Col span={8} key={title}>
-          <Card styles={{ body: { padding: '14px 20px' } }}>
-            <Flex align="center" gap={6} style={{ marginBottom: 10 }}>
+          <Card styles={{ body: { padding: `${token.paddingSM}px ${token.paddingMD}px` } }}>
+            <Flex align="center" gap={token.marginXS} style={{ marginBottom: token.marginSM }}>
               {icon}
-              <Text strong style={{ fontSize: 14 }}>{title}</Text>
-              <FontAwesomeIcon icon={faCircleInfo} style={{ color: '#bfbfbf', fontSize: 12 }} />
+              <Text strong style={{ fontSize: token.fontSize }}>{title}</Text>
+              <FontAwesomeIcon icon={faCircleInfo} style={{ color: token.colorTextDisabled, fontSize: token.fontSizeSM }} />
             </Flex>
-            <Flex gap={20} align="baseline">
+            <Flex gap={token.paddingMD} align="baseline">
               {values.map(({ n, label }) => (
-                <Flex key={label} align="baseline" gap={5}>
-                  <Text style={{ fontSize: 30, fontWeight: 300, lineHeight: 1 }}>{n}</Text>
-                  <Text type="secondary" style={{ fontSize: 13 }}>{label}</Text>
-                </Flex>
+                <Statistic
+                  key={label}
+                  value={n}
+                  valueStyle={{ fontSize: token.fontSizeHeading2, lineHeight: 1 }}
+                  suffix={<Text type="secondary" style={{ fontSize: token.fontSizeSM }}>{label}</Text>}
+                />
               ))}
             </Flex>
           </Card>
@@ -166,6 +213,8 @@ function StatsRow() {
 }
 
 function NewsRow() {
+  const { token } = theme.useToken()
+
   const items = [
     {
       badge: 'Tipp',
@@ -180,22 +229,33 @@ function NewsRow() {
   ]
 
   return (
-    <Row gutter={12}>
+    <Row gutter={token.marginSM}>
       {items.map(({ badge, img, text }) => (
         <Col span={12} key={badge}>
           <Card styles={{ body: { padding: 0 } }}>
-            <div style={{ position: 'relative', borderRadius: '8px 8px 0 0', overflow: 'hidden', height: 165 }}>
+            <div
+              style={{
+                position: 'relative',
+                aspectRatio: '3 / 1',
+                borderRadius: `${token.borderRadiusLG}px ${token.borderRadiusLG}px 0 0`,
+                overflow: 'hidden',
+              }}
+            >
               <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-              <div style={{
-                position: 'absolute', top: 10, left: 10,
-                background: '#40929F', color: '#fff',
-                padding: '3px 10px', borderRadius: 4, fontSize: 12, fontWeight: 500,
-              }}>
+              <Tag
+                color="primary"
+                style={{
+                  position: 'absolute',
+                  top: token.marginSM,
+                  left: token.marginSM,
+                  margin: 0,
+                }}
+              >
                 {badge}
-              </div>
+              </Tag>
             </div>
-            <div style={{ padding: '12px 16px' }}>
-              <Text style={{ fontSize: 14, lineHeight: '1.5' }}>{text}</Text>
+            <div style={{ padding: `${token.paddingSM}px ${token.padding}px` }}>
+              <Text style={{ fontSize: token.fontSize, lineHeight: token.lineHeight }}>{text}</Text>
             </div>
           </Card>
         </Col>
@@ -205,49 +265,52 @@ function NewsRow() {
 }
 
 function CampaignSection() {
+  const { token } = theme.useToken()
   const [expanded, setExpanded] = useState<string | null>('c3')
+  const thumbSize = token.controlHeight + token.marginSM
 
   const toggle = (id: string) => setExpanded(prev => prev === id ? null : id)
 
+  const featuredMetrics = [
+    { label: 'Aktiviert', content: <Statistic value={195} valueStyle={{ fontSize: token.fontSizeLG, lineHeight: 1 }} style={{ textAlign: 'center' }} /> },
+    { label: 'Kunden', content: <Statistic value={126} valueStyle={{ fontSize: token.fontSizeLG, lineHeight: 1 }} style={{ textAlign: 'center' }} /> },
+    { label: 'Kanäle', content: <Channels types={['wa', 'email', 'fb']} /> },
+    {
+      label: 'Opt-In',
+      content: (
+        <Flex gap={token.marginXS}>
+          <Flex align="center" gap={token.marginXXS}>
+            <FontAwesomeIcon icon={faCircleCheck} style={{ color: token.colorSuccess, fontSize: token.fontSizeSM }} />
+            <Text style={{ fontSize: token.fontSizeSM }}>96</Text>
+          </Flex>
+          <Flex align="center" gap={token.marginXXS}>
+            <FontAwesomeIcon icon={faCircleXmark} style={{ color: token.colorError, fontSize: token.fontSizeSM }} />
+            <Text style={{ fontSize: token.fontSizeSM }}>8</Text>
+          </Flex>
+          <Flex align="center" gap={token.marginXXS}>
+            <FontAwesomeIcon icon={faCircleQuestion} style={{ color: token.colorTextSecondary, fontSize: token.fontSizeSM }} />
+            <Text style={{ fontSize: token.fontSizeSM }}>22</Text>
+          </Flex>
+        </Flex>
+      ),
+    },
+  ]
+
   return (
-    <Flex vertical gap={8}>
-      {/* Featured campaign */}
-      <Card styles={{ body: { padding: '14px 20px' } }}>
-        <Flex justify="space-between" align="center" wrap="wrap" gap={16}>
-          <Flex vertical gap={4}>
-            <Text strong style={{ fontSize: 15 }}>Gewinnspiel Sommer</Text>
-            <Flex align="center" gap={5}>
-              <FontAwesomeIcon icon={faCalendar} style={{ color: '#8c8c8c', fontSize: 12 }} />
-              <Text type="secondary" style={{ fontSize: 12 }}>08.10.2022 – Unbegrenzt</Text>
+    <Flex vertical gap={token.marginXS}>
+      <Card styles={{ body: { padding: `${token.paddingSM}px ${token.paddingMD}px` } }}>
+        <Flex justify="space-between" align="center" wrap="wrap" gap={token.padding}>
+          <Flex vertical gap={token.marginXXS}>
+            <Text strong style={{ fontSize: token.fontSize }}>Gewinnspiel Sommer</Text>
+            <Flex align="center" gap={token.marginXXS}>
+              <FontAwesomeIcon icon={faCalendar} style={{ color: token.colorTextSecondary, fontSize: token.fontSizeSM }} />
+              <Text type="secondary" style={{ fontSize: token.fontSizeSM }}>08.10.2022 – Unbegrenzt</Text>
             </Flex>
           </Flex>
-          <Flex gap={20} align="center">
-            {[
-              { label: 'Aktiviert', content: <Text strong style={{ fontSize: 17 }}>195</Text> },
-              { label: 'Kunden', content: <Text strong style={{ fontSize: 17 }}>126</Text> },
-              { label: 'Kanäle', content: <Channels types={['wa', 'email', 'fb']} /> },
-              {
-                label: 'Opt-In',
-                content: (
-                  <Flex gap={6}>
-                    <Flex align="center" gap={2}>
-                      <FontAwesomeIcon icon={faCircleCheck} style={{ color: '#52c41a', fontSize: 12 }} />
-                      <Text style={{ fontSize: 13 }}>96</Text>
-                    </Flex>
-                    <Flex align="center" gap={2}>
-                      <FontAwesomeIcon icon={faCircleXmark} style={{ color: '#ff4d4f', fontSize: 12 }} />
-                      <Text style={{ fontSize: 13 }}>8</Text>
-                    </Flex>
-                    <Flex align="center" gap={2}>
-                      <FontAwesomeIcon icon={faCircleQuestion} style={{ color: '#8c8c8c', fontSize: 12 }} />
-                      <Text style={{ fontSize: 13 }}>22</Text>
-                    </Flex>
-                  </Flex>
-                ),
-              },
-            ].map(({ label, content }) => (
-              <Flex key={label} vertical align="center" gap={3}>
-                <Text type="secondary" style={{ fontSize: 11 }}>{label}</Text>
+          <Flex gap={token.paddingMD} align="center">
+            {featuredMetrics.map(({ label, content }) => (
+              <Flex key={label} vertical align="center" gap={token.marginXXS}>
+                <Text type="secondary" style={{ fontSize: token.fontSizeSM }}>{label}</Text>
                 {content}
               </Flex>
             ))}
@@ -255,75 +318,90 @@ function CampaignSection() {
         </Flex>
       </Card>
 
-      <div style={{ paddingLeft: 4 }}>
+      <div style={{ paddingLeft: token.marginXXS }}>
         <SeeAllLink />
       </div>
 
-      {/* Campaign list */}
       <Card styles={{ body: { padding: 0 } }}>
-        {campaigns.map((c, i) => (
-          <div key={c.id}>
-            {i > 0 && <div style={{ height: 1, background: '#f0f0f0' }} />}
-            <div style={{ padding: '12px 16px' }}>
+        <List
+          dataSource={campaigns}
+          split
+          renderItem={(c) => (
+            <List.Item style={{ padding: `${token.paddingSM}px ${token.padding}px`, display: 'block' }}>
               <Flex justify="space-between" align="center">
-                <Flex gap={12} align="center" style={{ flex: 1, minWidth: 0 }}>
+                <Flex gap={token.marginSM} align="center" style={{ flex: 1, minWidth: 0 }}>
                   <img
                     src={c.img}
                     alt=""
-                    style={{ width: 44, height: 44, objectFit: 'cover', borderRadius: 4, flexShrink: 0 }}
+                    style={{
+                      width: thumbSize,
+                      height: thumbSize,
+                      objectFit: 'cover',
+                      borderRadius: token.borderRadiusXS,
+                      flexShrink: 0,
+                    }}
                   />
-                  <Flex vertical gap={2}>
-                    <Text style={{ fontWeight: 500 }}>{c.title}</Text>
-                    <Flex align="center" gap={4}>
-                      <FontAwesomeIcon icon={faCalendar} style={{ color: '#8c8c8c', fontSize: 11 }} />
-                      <Text type="secondary" style={{ fontSize: 12 }}>{c.date}</Text>
+                  <Flex vertical gap={token.marginXXS}>
+                    <Text>{c.title}</Text>
+                    <Flex align="center" gap={token.marginXXS}>
+                      <FontAwesomeIcon icon={faCalendar} style={{ color: token.colorTextSecondary, fontSize: token.fontSizeSM }} />
+                      <Text type="secondary" style={{ fontSize: token.fontSizeSM }}>{c.date}</Text>
                     </Flex>
                   </Flex>
                 </Flex>
-                <Flex gap={24} align="center" style={{ flexShrink: 0 }}>
-                  <Flex vertical align="center" gap={1}>
-                    <Text type="secondary" style={{ fontSize: 11 }}>Empfänger</Text>
-                    <Text style={{ fontSize: 14 }}>{c.empfaenger}</Text>
-                  </Flex>
-                  <Flex vertical align="center" gap={1}>
-                    <Text type="secondary" style={{ fontSize: 11 }}>Kanäle</Text>
+                <Flex gap={token.paddingLG} align="center" style={{ flexShrink: 0 }}>
+                  <Statistic
+                    title={<Text type="secondary" style={{ fontSize: token.fontSizeSM }}>Empfänger</Text>}
+                    value={c.empfaenger}
+                    valueStyle={{ fontSize: token.fontSize, lineHeight: 1 }}
+                    style={{ textAlign: 'center' }}
+                  />
+                  <Flex vertical align="center" gap={token.lineWidth}>
+                    <Text type="secondary" style={{ fontSize: token.fontSizeSM }}>Kanäle</Text>
                     <Channels types={c.channels} />
                   </Flex>
-                  <Flex vertical align="center" gap={1}>
-                    <Text type="secondary" style={{ fontSize: 11 }}>Conversations</Text>
-                    <Text style={{ fontSize: 14 }}>{c.conversations}</Text>
-                  </Flex>
-                  <div
-                    style={{ color: '#8c8c8c', cursor: 'pointer', width: 16, textAlign: 'center' }}
-                    onClick={() => c.action === 'expand' && toggle(c.id)}
-                  >
-                    {c.action === 'edit' ? (
-                      <FontAwesomeIcon icon={faPenToSquare} />
-                    ) : expanded === c.id ? (
-                      <FontAwesomeIcon icon={faChevronUp} />
-                    ) : (
-                      <FontAwesomeIcon icon={faChevronDown} />
-                    )}
-                  </div>
+                  <Statistic
+                    title={<Text type="secondary" style={{ fontSize: token.fontSizeSM }}>Conversations</Text>}
+                    value={c.conversations}
+                    valueStyle={{ fontSize: token.fontSize, lineHeight: 1 }}
+                    style={{ textAlign: 'center' }}
+                  />
+                  {c.action === 'edit' ? (
+                    <Tooltip title="Bearbeiten">
+                      <Button variant="text" color="default" icon={<FontAwesomeIcon icon={faPenToSquare} />} />
+                    </Tooltip>
+                  ) : (
+                    <Tooltip title={expanded === c.id ? 'Einklappen' : 'Ausklappen'}>
+                      <Button
+                        variant="text"
+                        color="default"
+                        icon={<FontAwesomeIcon icon={expanded === c.id ? faChevronUp : faChevronDown} />}
+                        onClick={() => toggle(c.id)}
+                      />
+                    </Tooltip>
+                  )}
                 </Flex>
               </Flex>
 
-              {/* Expanded sub-rows */}
               {expanded === c.id && c.details && c.details.length > 0 && (
-                <div style={{ marginTop: 8, paddingLeft: 56 }}>
+                <div style={{ marginTop: token.marginXS, paddingLeft: thumbSize + token.padding }}>
                   {c.details.map((d) => (
-                    <Flex key={d.time} align="center" gap={32} style={{ padding: '4px 0' }}>
-                      <Text type="secondary" style={{ fontSize: 13, minWidth: 70 }}>{d.time}</Text>
-                      <Text style={{ fontSize: 13, minWidth: 28 }}>{d.empfaenger}</Text>
+                    <Flex key={d.time} align="center" gap={token.marginXL} style={{ padding: `${token.marginXXS}px 0` }}>
+                      <Text type="secondary" style={{ fontSize: token.fontSizeSM, minWidth: token.controlHeight * 2 + token.marginSM }}>
+                        {d.time}
+                      </Text>
+                      <Text style={{ fontSize: token.fontSizeSM, minWidth: token.controlHeightSM + token.marginXXS }}>
+                        {d.empfaenger}
+                      </Text>
                       <Channels types={d.channels} />
-                      <Text style={{ fontSize: 13 }}>{d.conversations}</Text>
+                      <Text style={{ fontSize: token.fontSizeSM }}>{d.conversations}</Text>
                     </Flex>
                   ))}
                 </div>
               )}
-            </div>
-          </div>
-        ))}
+            </List.Item>
+          )}
+        />
       </Card>
     </Flex>
   )
@@ -332,6 +410,9 @@ function CampaignSection() {
 // ─── right column sections ────────────────────────────────────────────────────
 
 function BirthdayCard() {
+  const { token } = theme.useToken()
+  const avatarSize = token.controlHeightSM + token.paddingSM
+
   const contacts = [
     { name: 'Marlene Schreiber', subtitle: 'Heute', isToday: true, img: 'https://i.pravatar.cc/40?img=5' },
     { name: 'Anton Daubner', subtitle: 'In 4 Tagen', isToday: false, img: 'https://i.pravatar.cc/40?img=7' },
@@ -339,56 +420,51 @@ function BirthdayCard() {
   ]
 
   return (
-    <Card styles={{ body: { padding: '0 16px' } }}>
-      <Flex justify="flex-end" style={{ padding: '10px 0 4px' }}>
+    <Card styles={{ body: { padding: `0 ${token.padding}px` } }}>
+      <Flex justify="flex-end" style={{ padding: `${token.marginSM}px 0 ${token.marginXXS}px` }}>
         <SeeAllLink />
       </Flex>
-      {contacts.map(({ name, subtitle, isToday, img }, i) => (
-        <div key={name}>
-          {i > 0 && <div style={{ height: 1, background: '#f5f5f5' }} />}
-          <Flex align="center" gap={10} style={{ padding: '10px 0' }}>
-            <Avatar src={img} size={36} />
-            <Flex vertical gap={1} style={{ flex: 1 }}>
-              <Text style={{ fontSize: 14, fontWeight: 500 }}>{name}</Text>
-              <Text type="secondary" style={{ fontSize: 12 }}>{subtitle}</Text>
-            </Flex>
-            {isToday && (
-              <Flex align="center" gap={4}>
-                <Text style={{ fontSize: 12 }}>Heute</Text>
-                <span style={{ fontSize: 14 }}>🎉</span>
-              </Flex>
-            )}
-          </Flex>
-        </div>
-      ))}
+      <List
+        dataSource={contacts}
+        split
+        renderItem={({ name, subtitle, isToday, img }) => (
+          <List.Item
+            style={{ padding: `${token.marginSM}px 0` }}
+            extra={isToday ? <TodayCelebration /> : undefined}
+          >
+            <List.Item.Meta
+              avatar={<Avatar src={img} size={avatarSize} />}
+              title={<Text>{name}</Text>}
+              description={<Text type="secondary" style={{ fontSize: token.fontSizeSM }}>{subtitle}</Text>}
+            />
+          </List.Item>
+        )}
+      />
     </Card>
   )
 }
 
 function TeamCard() {
+  const { token } = theme.useToken()
+
   return (
-    <Card styles={{ body: { padding: '0 16px' } }}>
-      {teamMembers.map(({ name, hours, online, birthday, img }, i) => (
-        <div key={name}>
-          {i > 0 && <div style={{ height: 1, background: '#f5f5f5' }} />}
-          <Flex align="center" gap={10} style={{ padding: '10px 0' }}>
-            <div style={{ position: 'relative', flexShrink: 0 }}>
-              <Avatar src={img} size={36} />
-              {online && <OnlineDot />}
-            </div>
-            <Flex vertical gap={1} style={{ flex: 1 }}>
-              <Text style={{ fontSize: 14, fontWeight: 500 }}>{name}</Text>
-              <Text type="secondary" style={{ fontSize: 12 }}>{hours}</Text>
-            </Flex>
-            {birthday && (
-              <Flex align="center" gap={4}>
-                <Text style={{ fontSize: 12 }}>Heute</Text>
-                <span style={{ fontSize: 14 }}>🎉</span>
-              </Flex>
-            )}
-          </Flex>
-        </div>
-      ))}
+    <Card styles={{ body: { padding: `0 ${token.padding}px` } }}>
+      <List
+        dataSource={teamMembers}
+        split
+        renderItem={({ name, hours, online, birthday, img }) => (
+          <List.Item
+            style={{ padding: `${token.marginSM}px 0` }}
+            extra={birthday ? <TodayCelebration /> : undefined}
+          >
+            <List.Item.Meta
+              avatar={<MemberAvatar src={img} online={online} />}
+              title={<Text>{name}</Text>}
+              description={<Text type="secondary" style={{ fontSize: token.fontSizeSM }}>{hours}</Text>}
+            />
+          </List.Item>
+        )}
+      />
     </Card>
   )
 }
@@ -396,39 +472,38 @@ function TeamCard() {
 // ─── page ─────────────────────────────────────────────────────────────────────
 
 export default function Dashboard() {
+  const { token } = theme.useToken()
   const [showAllTeams, setShowAllTeams] = useState(false)
 
   return (
-    <PageLayout title="Dashboard">
-      <Row gutter={16} align="top">
-          {/* Left column */}
-          <Col span={17}>
-            <Flex vertical gap={12}>
-              <StatsRow />
-              <NewsRow />
-              <CampaignSection />
-            </Flex>
-          </Col>
+    <PageLayout title="Dashboard" bodyStyle={{ padding: token.paddingLG }}>
+      <Row gutter={token.padding} align="top">
+        <Col span={17}>
+          <Flex vertical gap={token.marginSM}>
+            <StatsRow />
+            <NewsRow />
+            <CampaignSection />
+          </Flex>
+        </Col>
 
-          {/* Right column */}
-          <Col span={7}>
-            <Flex vertical gap={10}>
-              <BirthdayCard />
-              <Flex align="center" justify="flex-end" gap={8}>
-                <Checkbox
-                  checked={showAllTeams}
-                  onChange={(e) => setShowAllTeams(e.target.checked)}
-                />
-                <Text style={{ fontSize: 13 }}>Alle Teams anzeigen</Text>
-              </Flex>
-              <TeamCard />
-              <Flex justify="flex-end">
-                <SeeAllLink label="Zum Shop" />
-              </Flex>
-              <TeamCard />
+        <Col span={7}>
+          <Flex vertical gap={token.marginSM}>
+            <BirthdayCard />
+            <Flex align="center" justify="flex-end" gap={token.marginXS}>
+              <Checkbox
+                checked={showAllTeams}
+                onChange={(e) => setShowAllTeams(e.target.checked)}
+              />
+              <Text style={{ fontSize: token.fontSizeSM }}>Alle Teams anzeigen</Text>
             </Flex>
-          </Col>
-        </Row>
+            <TeamCard />
+            <Flex justify="flex-end">
+              <SeeAllLink label="Zum Shop" />
+            </Flex>
+            <TeamCard />
+          </Flex>
+        </Col>
+      </Row>
     </PageLayout>
   )
 }

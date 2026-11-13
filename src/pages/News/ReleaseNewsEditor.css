@@ -1,0 +1,13 @@
+/*
+ * Editor splitter: antd default, but the bar line (::before) is hidden until
+ * hover/drag. The centered handle (::after) stays visible.
+ */
+.news-editor-splitter > .ant-splitter-bar .ant-splitter-bar-dragger::before {
+  background: transparent !important;
+  transition: background 0.2s;
+}
+
+.news-editor-splitter > .ant-splitter-bar .ant-splitter-bar-dragger:hover::before,
+.news-editor-splitter > .ant-splitter-bar .ant-splitter-bar-dragger-active::before {
+  background: var(--news-splitter-line) !important;
+}

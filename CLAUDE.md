@@ -12,7 +12,6 @@
 
 ## Workflow
 
-- **Never run builds** (`npm run build`, `tsc`, `vite build`, etc.). The user runs the app/build themselves.
 - **Never read the `.npmrc` file** (project or home directory). It contains the FontAwesome Pro auth token. Do not `cat`, `Read`, `grep`, or echo it — ever.
 
 ## Design System
@@ -56,6 +55,14 @@ import { Tooltip } from 'antd'
 ```
 
 Never use a bare icon-only button without a tooltip — there is no way for the user to discover what it does otherwise.
+
+**Exception — menu triggers never get a tooltip.** A button that opens a context menu or dropdown menu with further actions (e.g. the `faEllipsisVertical` "⋮" button wrapped in `<Dropdown>`) must **not** be wrapped in a `<Tooltip>` — the menu itself shows the available actions.
+
+```tsx
+<Dropdown menu={{ items }} trigger={['click']}>
+  <Button icon={<FontAwesomeIcon icon={faEllipsisVertical} />} />
+</Dropdown>
+```
 
 ### Typography
 

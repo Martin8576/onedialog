@@ -16,8 +16,3 @@ html, body {
   height: 100%;
   overflow: hidden;
 }
-
-/* Header tabs: remove the grey bottom border, keep only the active indicator */
-.ant-tabs-nav::before {
-  border-bottom: none !important;
-}

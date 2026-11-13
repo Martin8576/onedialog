@@ -1,3 +1,7 @@
+import PageLayout from '../../designsystem/sharedComponents/PageLayout'
+
 export default function Newsletter() {
-  return null
+  return (
+    <PageLayout title="Newsletter"/>
+  )
 }

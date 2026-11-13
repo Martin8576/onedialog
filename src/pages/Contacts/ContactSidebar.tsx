@@ -1,13 +1,12 @@
-import { useState } from 'react'
-import { Avatar, Tag, Tabs, Button, Typography, Flex, theme, Drawer, Tooltip } from 'antd'
+import { Avatar, Tag, Button, Typography, Flex, theme } from 'antd'
+import { TabSidebar, ChannelIcon } from '../../designsystem/components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  faXmark, faMerge, faPen, faTrash,
+  faMerge, faPen, faTrash,
   faUser, faCircleInfo, faClockRotateLeft, faSliders,
   faToggleOn, faTags, faTag, faPhone, faCopy,
-  faCheck, faPlus, faEnvelope,
+  faCheck, faPlus,
 } from '@fortawesome/pro-light-svg-icons'
-import { faWhatsapp, faFacebook } from '@fortawesome/free-brands-svg-icons'
 import { type Contact } from '../../data/contacts'
 import { getUserByName } from '../../data/users'
 
@@ -19,7 +18,7 @@ const { Text } = Typography
 function SectionHeader({ icon, label }: { icon: any; label: string }) {
   const { token } = theme.useToken()
   return (
-    <Flex align="center" gap={8} style={{ marginBottom: token.marginSM }}>
+    <Flex align="center" gap={token.marginXS} style={{ marginBottom: token.marginSM }}>
       <FontAwesomeIcon icon={icon} style={{ color: token.colorTextSecondary, fontSize: token.fontSize }} />
       <Text strong>{label}</Text>
     </Flex>
@@ -30,7 +29,7 @@ function InfoRow({ label, children }: { label: string; children: React.ReactNode
   const { token } = theme.useToken()
   return (
     <div style={{ marginBottom: token.marginXS }}>
-      <Text type="secondary" style={{ fontSize: token.fontSizeSM, display: 'block', marginBottom: 2 }}>{label}</Text>
+      <Text type="secondary" style={{ fontSize: token.fontSizeSM, display: 'block', marginBottom: token.marginXXS }}>{label}</Text>
       <div>{children}</div>
     </div>
   )
@@ -76,7 +75,7 @@ function TabInformation({ contact }: { contact: Contact }) {
         <InfoRow label="VIP-Kunde"><Text>{contact.isVip ? 'Ja' : 'Nein'}</Text></InfoRow>
         {contact.leadQualification.length > 0 && (
           <InfoRow label="Lead-Qualifizierung">
-            <Flex gap={4} wrap="wrap">
+            <Flex gap={token.marginXXS} wrap="wrap">
               {contact.leadQualification.map(l => (
                 <Tag key={l} style={{ margin: 0, borderRadius: token.borderRadiusSM, fontSize: token.fontSizeSM }}>{l}</Tag>
               ))}
@@ -90,13 +89,13 @@ function TabInformation({ contact }: { contact: Contact }) {
         <div style={{ background: token.colorBgContainer, borderRadius: token.borderRadius, padding: token.padding }}>
           <SectionHeader icon={faClockRotateLeft} label="Letzte Aktion" />
           <Text strong style={{ fontSize: token.fontSizeSM, display: 'block' }}>{contact.lastAction.date}</Text>
-          <Text style={{ display: 'block', marginTop: 2 }}>{contact.lastAction.title}</Text>
+          <Text style={{ display: 'block', marginTop: token.marginXXS }}>{contact.lastAction.title}</Text>
           {contact.lastAction.subtitle && (
             <Text type="secondary" style={{ fontSize: token.fontSizeSM, display: 'block' }}>
               {contact.lastAction.subtitle}
             </Text>
           )}
-          <Flex align="center" gap={4} style={{ marginTop: token.marginXS }}>
+          <Flex align="center" gap={token.marginXXS} style={{ marginTop: token.marginXS }}>
             <FontAwesomeIcon icon={faCheck} style={{ color: token.colorTextTertiary, fontSize: token.fontSizeSM }} />
             <Text type="secondary" style={{ fontSize: token.fontSizeSM }}>
               {contact.lastAction.status === 'read' ? 'Gelesen' : 'Ungelesen'}
@@ -109,7 +108,7 @@ function TabInformation({ contact }: { contact: Contact }) {
       <div style={{ background: token.colorBgContainer, borderRadius: token.borderRadius, padding: token.padding }}>
         <SectionHeader icon={faSliders} label="Weitere Informationen" />
         <InfoRow label="Ansprechpartner">
-          <Flex align="center" gap={6}>
+          <Flex align="center" gap={token.marginXS}>
             {assigneeUser && <Avatar src={assigneeUser.img} size={20} />}
             <Text>{contact.assignee}</Text>
           </Flex>
@@ -142,9 +141,9 @@ function TabInformation({ contact }: { contact: Contact }) {
           <SectionHeader icon={faTags} label="Labels und Tags" />
           {contact.labelTags.length > 0 && (
             <InfoRow label="Label">
-              <Flex gap={4} wrap="wrap">
+              <Flex gap={token.marginXXS} wrap="wrap">
                 {contact.labelTags.map(l => (
-                  <Tag key={l} icon={<FontAwesomeIcon icon={faTag} style={{ marginRight: 4 }} />}
+                  <Tag key={l} icon={<FontAwesomeIcon icon={faTag} style={{ marginRight: token.marginXXS }} />}
                     style={{ margin: 0, borderRadius: token.borderRadiusSM, fontSize: token.fontSizeSM }}>
                     {l}
                   </Tag>
@@ -154,7 +153,7 @@ function TabInformation({ contact }: { contact: Contact }) {
           )}
           {contact.tags.length > 0 && (
             <InfoRow label="Tags">
-              <Flex gap={4} wrap="wrap">
+              <Flex gap={token.marginXXS} wrap="wrap">
                 {contact.tags.map(t => (
                   <Tag key={t} style={{ margin: 0, borderRadius: token.borderRadiusSM, fontSize: token.fontSizeSM }}>{t}</Tag>
                 ))}
@@ -192,7 +191,7 @@ function TabCases({ contact }: { contact: Contact }) {
       <Flex vertical gap={token.marginXS}>
         {activeCases.map(c => (
           <Flex key={c.id} justify="space-between" align="center"
-            style={{ padding: '10px 14px', background: token.colorBgContainer, borderRadius: token.borderRadius }}>
+            style={{ padding: `${token.paddingXS + token.marginXXS}px ${token.paddingSM + token.marginXXS}px`, background: token.colorBgContainer, borderRadius: token.borderRadius }}>
             <div>
               <Text strong style={{ display: 'block' }}>{c.title}</Text>
               {c.channel && (
@@ -224,7 +223,7 @@ function TabTasks({ contact }: { contact: Contact }) {
       <Flex vertical gap={token.marginXS}>
         {activeTasks.map(t => (
           <Flex key={t.id} justify="space-between" align="center"
-            style={{ padding: '10px 14px', background: token.colorBgContainer, borderRadius: token.borderRadius }}>
+            style={{ padding: `${token.paddingXS + token.marginXXS}px ${token.paddingSM + token.marginXXS}px`, background: token.colorBgContainer, borderRadius: token.borderRadius }}>
             <div>
               <Text strong style={{ display: 'block' }}>{t.title}</Text>
               <Text type="secondary" style={{ fontSize: token.fontSizeSM }}>
@@ -253,25 +252,25 @@ function TabChannels({ contact }: { contact: Contact }) {
       <Text strong style={{ display: 'block', marginBottom: token.marginSM }}>Kanäle</Text>
       <Flex vertical gap={token.marginXS}>
         {contact.channels.includes('whatsapp') && contact.phone && (
-          <Flex align="center" gap={10} style={{ padding: '10px 14px', background: token.colorBgContainer, borderRadius: token.borderRadius }}>
-            <FontAwesomeIcon icon={faWhatsapp} style={{ color: '#25D366', fontSize: token.fontSizeXL }} />
+          <Flex align="center" gap={token.marginSM} style={{ padding: `${token.paddingXS + token.marginXXS}px ${token.paddingSM + token.marginXXS}px`, background: token.colorBgContainer, borderRadius: token.borderRadius }}>
+            <ChannelIcon channel="whatsapp" size={token.fontSizeXL} />
             <Text>{contact.phone}</Text>
           </Flex>
         )}
         {contact.channels.includes('facebook') && contact.facebookHandle && (
-          <Flex align="center" gap={10} style={{ padding: '10px 14px', background: token.colorBgContainer, borderRadius: token.borderRadius }}>
-            <FontAwesomeIcon icon={faFacebook} style={{ color: '#1877F2', fontSize: token.fontSizeXL }} />
+          <Flex align="center" gap={token.marginSM} style={{ padding: `${token.paddingXS + token.marginXXS}px ${token.paddingSM + token.marginXXS}px`, background: token.colorBgContainer, borderRadius: token.borderRadius }}>
+            <ChannelIcon channel="facebook" size={token.fontSizeXL} />
             <Text>{contact.facebookHandle}</Text>
           </Flex>
         )}
         {contact.channels.includes('email') && (
-          <Flex align="center" gap={10} style={{ padding: '10px 14px', background: token.colorBgContainer, borderRadius: token.borderRadius }}>
-            <FontAwesomeIcon icon={faEnvelope} style={{ color: token.colorTextSecondary, fontSize: token.fontSizeXL }} />
+          <Flex align="center" gap={token.marginSM} style={{ padding: `${token.paddingXS + token.marginXXS}px ${token.paddingSM + token.marginXXS}px`, background: token.colorBgContainer, borderRadius: token.borderRadius }}>
+            <ChannelIcon channel="email" size={token.fontSizeXL} />
             <Text type="secondary">Keine E-Mail hinterlegt</Text>
           </Flex>
         )}
         {contact.channels.includes('phone') && contact.phone && !contact.channels.includes('whatsapp') && (
-          <Flex align="center" gap={10} style={{ padding: '10px 14px', background: token.colorBgContainer, borderRadius: token.borderRadius }}>
+          <Flex align="center" gap={token.marginSM} style={{ padding: `${token.paddingXS + token.marginXXS}px ${token.paddingSM + token.marginXXS}px`, background: token.colorBgContainer, borderRadius: token.borderRadius }}>
             <FontAwesomeIcon icon={faPhone} style={{ color: token.colorTextSecondary, fontSize: token.fontSizeXL }} />
             <Text>{contact.phone}</Text>
           </Flex>
@@ -300,11 +299,11 @@ function TabActions({ contact }: { contact: Contact }) {
         <Flex key={i} gap={token.marginSM} style={{ paddingBottom: token.paddingMD, position: 'relative' }}>
           {i < contact.actions.length - 1 && (
             <div style={{
-              position: 'absolute', left: 80, top: 20, bottom: 0,
-              width: 1, background: token.colorBorderSecondary,
+              position: 'absolute', left: token.paddingXL, top: token.paddingMD, bottom: 0,
+              width: token.lineWidth, background: token.colorBorderSecondary,
             }} />
           )}
-          <Text type="secondary" style={{ fontSize: token.fontSizeSM, minWidth: 80, paddingTop: 2, flexShrink: 0 }}>
+          <Text type="secondary" style={{ fontSize: token.fontSizeSM, minWidth: token.paddingXL, paddingTop: token.marginXXS, flexShrink: 0 }}>
             {action.date}
           </Text>
           <div style={{ flex: 1 }}>
@@ -331,95 +330,28 @@ interface ContactSidebarProps {
 }
 
 export default function ContactSidebar({ contact, open, onClose, onMerge, getContainer }: ContactSidebarProps) {
-  const { token } = theme.useToken()
-  const [activeTab, setActiveTab] = useState('information')
-
-  const tabItems = [
-    { key: 'information', label: 'Informationen' },
-    { key: 'cases', label: 'Vorgänge' },
-    { key: 'tasks', label: 'Aufgaben' },
-    { key: 'channels', label: 'Kanäle' },
-    { key: 'actions', label: 'Aktionen' },
-  ]
-
-  function renderContent() {
-    if (!contact) return null
-    switch (activeTab) {
-      case 'information': return <TabInformation contact={contact} />
-      case 'cases': return <TabCases contact={contact} />
-      case 'tasks': return <TabTasks contact={contact} />
-      case 'channels': return <TabChannels contact={contact} />
-      case 'actions': return <TabActions contact={contact} />
-    }
-  }
+  if (!contact) return null
 
   return (
-    <Drawer
+    <TabSidebar
       open={open}
       onClose={onClose}
-      placement="right"
-      closable={false}
-      title={null}
-      mask={false}
       getContainer={getContainer}
-      rootStyle={{ position: 'absolute' }}
+      title={`${contact.firstName} ${contact.lastName}`}
+      headerActions={[
+        { key: 'delete', tooltip: 'Löschen', icon: <FontAwesomeIcon icon={faTrash} /> },
+        { key: 'merge', tooltip: 'Zusammenführen', icon: <FontAwesomeIcon icon={faMerge} />, onClick: onMerge },
+        { key: 'edit', tooltip: 'Bearbeiten', icon: <FontAwesomeIcon icon={faPen} /> },
+      ]}
       footer={<Button type="primary">Nachricht schreiben</Button>}
-      styles={{
-        wrapper: { width: 560 },
-        body: {
-          padding: 0,
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          background: token.colorBgLayout,
-        },
-        footer: {
-          display: 'Flex',
-          justifyContent: 'flex-end',
-          padding: `${token.paddingSM}px ${token.paddingLG}px`,
-          borderTop: `1px solid ${token.colorBorder}`,
-          background: token.colorBgLayout,
-        },
-      }}
-    >
-      {contact && (
-        <>
-          {/* Header */}
-          <div style={{ padding: `${token.paddingSM}px ${token.paddingSM}px 0 ${token.paddingSM}px`, borderBottom: `1px solid ${token.colorBorder}` }}>
-            <Flex justify="space-between" align="center">
-              <Flex align="center" gap={token.marginXS}>
-                <Tooltip title="Schließen">
-                  <Button variant="text" color="default" onClick={onClose} icon={<FontAwesomeIcon icon={faXmark} />} />
-                </Tooltip>
-                <Text strong style={{ fontSize: token.fontSizeLG }}>{contact.firstName} {contact.lastName}</Text>
-              </Flex>
-              <Flex align="center">
-                <Tooltip title="Löschen">
-                  <Button variant="text" color="default" icon={<FontAwesomeIcon icon={faTrash} />} />
-                </Tooltip>
-                <Tooltip title="Zusammenführen">
-                  <Button variant="text" color="default" onClick={onMerge} icon={<FontAwesomeIcon icon={faMerge} />} />
-                </Tooltip>
-                <Tooltip title="Bearbeiten">
-                  <Button variant="text" color="default" icon={<FontAwesomeIcon icon={faPen} />} />
-                </Tooltip>
-              </Flex>
-            </Flex>
-            <Tabs
-              activeKey={activeTab}
-              onChange={setActiveTab}
-              style={{ marginBottom: 0, paddingLeft: token.paddingSM }}
-              tabBarStyle={{ margin: 0 }}
-              items={tabItems}
-            />
-          </div>
-
-          {/* Scrollable content */}
-          <div style={{ flex: 1, overflowY: 'auto' }}>
-            {renderContent()}
-          </div>
-        </>
-      )}
-    </Drawer>
+      defaultActiveTab="information"
+      tabs={[
+        { key: 'information', label: 'Informationen', content: <TabInformation contact={contact} /> },
+        { key: 'cases', label: 'Vorgänge', content: <TabCases contact={contact} /> },
+        { key: 'tasks', label: 'Aufgaben', content: <TabTasks contact={contact} /> },
+        { key: 'channels', label: 'Kanäle', content: <TabChannels contact={contact} /> },
+        { key: 'actions', label: 'Aktionen', content: <TabActions contact={contact} /> },
+      ]}
+    />
   )
 }

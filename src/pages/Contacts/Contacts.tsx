@@ -1,15 +1,16 @@
 import { useState, useMemo, useRef, useLayoutEffect, useEffect, useCallback } from 'react'
-import { Table, Avatar, Tag, Button, Typography, Flex, Input, Tooltip, theme } from 'antd'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { Table, Avatar, Tag, Button, Typography, Flex, Input, Tooltip, Segmented, theme } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCircleCheck, faCircleXmark, faCircleQuestion,
   faFilter,
   faMagnifyingGlass,
-  faPhone, faEnvelope,
-  faPen, faTrash, faMerge
+  faPhone,
+  faPen, faTrash, faMerge,
 } from '@fortawesome/pro-light-svg-icons'
-import { faWhatsapp, faFacebook } from '@fortawesome/free-brands-svg-icons'
+import { ChannelIcon, isChannelIconChannel } from '../../designsystem/components'
 import { PageLayout } from '../../designsystem/sharedComponents'
 import { contacts, type Contact, type Channel, type OptIn } from '../../data/contacts'
 import { getUserByName } from '../../data/users'
@@ -30,25 +31,15 @@ function OptInIcon({ value }: { value: OptIn }) {
 function ChannelIcons({ channels }: { channels: Channel[] }) {
   const { token } = theme.useToken()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const iconMap: Record<string, any> = {
-    whatsapp: faWhatsapp,
-    facebook: faFacebook,
-    email: faEnvelope,
-    phone: faPhone,
-  }
-  const colorMap: Record<string, string> = {
-    whatsapp: '#25D366',
-    facebook: '#1877F2',
-    email: token.colorTextSecondary,
-    phone: token.colorTextSecondary,
-  }
-
   return (
-    <Flex gap={5} align="center">
-      {channels.map(c => (
-        <FontAwesomeIcon key={c} icon={iconMap[c]} style={{ color: colorMap[c], fontSize: 15 }} />
-      ))}
+    <Flex gap={token.marginXXS} align="center">
+      {channels.map(c =>
+        isChannelIconChannel(c) ? (
+          <ChannelIcon key={c} channel={c} size={token.fontSize} />
+        ) : (
+          <FontAwesomeIcon key={c} icon={faPhone} style={{ color: token.colorTextSecondary, fontSize: token.fontSize }} />
+        ),
+      )}
     </Flex>
   )
 }
@@ -57,11 +48,20 @@ function ChannelIcons({ channels }: { channels: Channel[] }) {
 
 type TabFilter = 'all' | 'mine' | 'team'
 
+const CONTACT_FILTER_PATHS: Record<TabFilter, string> = {
+  mine: '/contacts/mine',
+  team: '/contacts/team',
+  all: '/contacts',
+}
+
 export default function Contacts() {
   const { token } = theme.useToken()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const activeTab: TabFilter =
+    location.pathname === '/contacts/mine' ? 'mine' : location.pathname === '/contacts/team' ? 'team' : 'all'
   const containerRef = useRef<HTMLDivElement>(null)
   const tableWrapRef = useRef<HTMLDivElement>(null)
-  const [activeTab, setActiveTab] = useState<TabFilter>('all')
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const [searchText, setSearchText] = useState('')
@@ -130,7 +130,7 @@ export default function Contacts() {
           <Flex align="center" gap={token.marginXS}>
             {c.img
               ? <Avatar src={c.img} size={28} style={{ flexShrink: 0 }} />
-              : <div style={{ width: 28, flexShrink: 0 }} />
+              : <div style={{ width: token.controlHeightSM + token.marginXXS, flexShrink: 0 }} />
             }
             <Text>{firstName}</Text>
           </Flex>
@@ -165,7 +165,7 @@ export default function Contacts() {
           const visible = labels.slice(0, 2)
           const rest = labels.length - visible.length
           return (
-            <Flex gap={4} wrap="wrap" align="center">
+            <Flex gap={token.marginXXS} wrap="wrap" align="center">
               {visible.map(l => (
                 <Tag key={l} style={{ margin: 0, borderRadius: token.borderRadiusSM, fontSize: token.fontSizeSM }}>{l}</Tag>
               ))}
@@ -181,7 +181,7 @@ export default function Contacts() {
         render: (name: string) => {
           const u = getUserByName(name)
           return (
-            <Flex align="center" gap={6}>
+            <Flex align="center" gap={token.marginXS}>
               {u && <Avatar src={u.img} size={20} />}
               <Text>{name}</Text>
             </Flex>
@@ -207,14 +207,19 @@ export default function Contacts() {
 
   return (
     <PageLayout
-      bodyStyle={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
-      tabItems={[
-        { key: 'all', label: 'Alle' },
-        { key: 'mine', label: 'Meine' },
-        { key: 'team', label: 'Team' },
-      ]}
-      activeTab={activeTab}
-      onTabChange={(k) => setActiveTab(k as TabFilter)}
+      title="Kontakte"
+      tabs={
+        <Segmented
+          value={activeTab}
+          options={[
+            { label: 'Meine', value: 'mine' },
+            { label: 'Team', value: 'team' },
+            { label: 'Alle', value: 'all' },
+          ]}
+          onChange={(value) => navigate(CONTACT_FILTER_PATHS[value as TabFilter])}
+        />
+      }
+      bodyStyle={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
       secondaryButtons={
         <>
           <Input
@@ -235,8 +240,8 @@ export default function Contacts() {
       addButtonText="Hinzufügen"
       onAdd={() => {}}
     >
-      <div ref={containerRef} style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-        <div ref={tableWrapRef} style={{ height: '100%', padding: token.paddingLG, boxSizing: 'border-box' }}>
+      <div ref={containerRef} style={{ flex: 1, minHeight: 0, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <div ref={tableWrapRef} style={{ flex: 1, minHeight: 0, padding: token.paddingLG, boxSizing: 'border-box' }}>
           <Table<Contact>
             dataSource={filtered}
             columns={columns}

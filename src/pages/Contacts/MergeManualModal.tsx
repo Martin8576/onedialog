@@ -135,7 +135,7 @@ function ClickableCell({ field, value, selected, onClick, inactive }: {
   } else if (field.type === 'tags') {
     const tags = (value as string[]) ?? []
     content = tags.length > 0
-      ? <Flex gap={4} wrap="wrap">{tags.map(t => <Tag key={t} style={{ margin: 0 }}>{t}</Tag>)}</Flex>
+      ? <Flex gap={token.marginXXS} wrap="wrap">{tags.map(t => <Tag key={t} style={{ margin: 0 }}>{t}</Tag>)}</Flex>
       : <Text type="secondary">–</Text>
   } else {
     const str = value != null && value !== '' ? String(value) : '–'
@@ -151,7 +151,7 @@ function ClickableCell({ field, value, selected, onClick, inactive }: {
       onMouseLeave={() => setHovered(false)}
       style={{
         flex: 1,
-        padding: '4px 10px',
+        padding: `${token.paddingXXS}px ${token.marginSM}px`,
         borderRadius: token.borderRadius,
         background: !inactive && selected ? token.colorPrimaryBg : hovered && !inactive ? token.colorFillAlter : 'transparent',
         cursor: onClick && !inactive ? 'pointer' : 'default',
@@ -174,7 +174,7 @@ function MergedFieldInput({ field, mergedValues, onChange }: {
   if (field.type === 'switch') {
     return (
       <Flex align="center"
-        style={{ minHeight: 32, padding: '4px 11px', border: `1px solid ${token.colorBorder}`, borderRadius: token.borderRadius, background: token.colorBgContainer }}>
+        style={{ minHeight: token.controlHeight, padding: `${token.paddingXXS}px ${token.paddingSM - token.lineWidth}px`, border: `1px solid ${token.colorBorder}`, borderRadius: token.borderRadius, background: token.colorBgContainer }}>
         <Switch checked={!!value} size="small" onChange={checked => onChange(field.key as string, checked)} />
       </Flex>
     )
@@ -182,7 +182,7 @@ function MergedFieldInput({ field, mergedValues, onChange }: {
   if (field.type === 'optinswitch') {
     return (
       <Flex align="center"
-        style={{ minHeight: 32, padding: '4px 11px', border: `1px solid ${token.colorBorder}`, borderRadius: token.borderRadius, background: token.colorBgContainer }}>
+        style={{ minHeight: token.controlHeight, padding: `${token.paddingXXS}px ${token.paddingSM - token.lineWidth}px`, border: `1px solid ${token.colorBorder}`, borderRadius: token.borderRadius, background: token.colorBgContainer }}>
         <Switch checked={value === 'yes'} size="small" onChange={checked => onChange(field.key as string, checked ? 'yes' : 'no')} />
       </Flex>
     )
@@ -375,7 +375,7 @@ export default function MergeManualModal({ open, contacts, onClose }: Props) {
                         )}
                         {selected && (
                           <Flex align="center" justify="center"
-                            style={{ position: 'absolute', top: 6, right: 6, width: 20, height: 20, borderRadius: '50%', background: token.colorPrimary }}>
+                            style={{ position: 'absolute', top: token.paddingXS - token.marginXXS, right: token.paddingXS - token.marginXXS, width: token.fontSizeXL, height: token.fontSizeXL, borderRadius: '50%', background: token.colorPrimary }}>
                           </Flex>
                         )}
                       </div>
@@ -406,7 +406,7 @@ export default function MergeManualModal({ open, contacts, onClose }: Props) {
                     <HoverRow key={field.key as string}>
                     <Flex align="flex-start" gap={token.marginLG}>
                       {/* Label */}
-                      <Flex vertical style={{ width: LABEL_W, flexShrink: 0, paddingTop: 6 }}>
+                      <Flex vertical style={{ width: LABEL_W, flexShrink: 0, paddingTop: token.paddingXS - token.marginXXS }}>
                         <Text strong style={{ fontSize: token.fontSizeSM }}>{field.label}</Text>
                       </Flex>
                       {/* Contact 1 */}

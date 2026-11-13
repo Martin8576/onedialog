@@ -1,5 +1,6 @@
 import React from 'react'
 import Header, { type HeaderProps } from './Header'
+import { Flex } from 'antd'
 
 export interface PageLayoutProps extends HeaderProps {
   children?: React.ReactNode
@@ -9,18 +10,19 @@ export interface PageLayoutProps extends HeaderProps {
 
 export default function PageLayout({ children, noPadding, bodyStyle, ...headerProps }: PageLayoutProps) {
   return (
-    <>
+    <Flex vertical style={{ height: '100%', overflow: 'hidden' }}>
       <Header {...headerProps} />
-      <div
+      <Flex
         style={{
           flex: 1,
+          minHeight: 0,
           overflowY: 'auto',
           overflowX: 'hidden',
           ...bodyStyle,
         }}
       >
         {children}
-      </div>
-    </>
+      </Flex>
+    </Flex>
   )
 }
